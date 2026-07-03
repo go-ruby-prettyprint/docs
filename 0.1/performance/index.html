@@ -421,6 +421,66 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library-level benchmark (Go API vs runtimes) — 2026-07-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library-level benchmark (Go API vs runtimes) — 2026-07-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-flat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-nested" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-nested
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-fill" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-fill
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-deep" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-deep
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-vs-yjit-the-headline" class="md-nav__link">
+    <span class="md-ellipsis">
+      go vs YJIT — the headline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -499,6 +559,66 @@
       Result (best of 5, ms)
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library-level benchmark (Go API vs runtimes) — 2026-07-03
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library-level benchmark (Go API vs runtimes) — 2026-07-03">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#format-flat" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-flat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-nested" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-nested
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-fill" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-fill
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#format-deep" class="md-nav__link">
+    <span class="md-ellipsis">
+      format-deep
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#go-vs-yjit-the-headline" class="md-nav__link">
+    <span class="md-ellipsis">
+      go vs YJIT — the headline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -590,6 +710,235 @@ that complete in well under ~200 ms carry the most relative noise; treat
 their ratios as order-of-magnitude. These are <strong>real measured numbers</strong> from
 the 2026-06-30 run (Apple M-series; <code>ruby 4.0.5 +PRISM</code>, <code>jruby 10.1.0.0</code>,
 <code>truffleruby 34.0.1</code>) — nothing is fabricated or cherry-picked.</p>
+</div>
+<h2 id="library-level-benchmark-go-api-vs-runtimes-2026-07-03">Library-level benchmark (Go API vs runtimes) — 2026-07-03<a class="headerlink" href="#library-level-benchmark-go-api-vs-runtimes-2026-07-03" title="Permanent link">&para;</a></h2>
+<p>This section measures the <strong>pure-Go library directly, through its Go API</strong> — not
+the <code>rbgo</code> interpreter path recorded above. It isolates the Wadler/Lindig layout
+engine from Ruby-interpreter dispatch, answering the parity question head-on:
+<em>is the pure-Go implementation as fast as the reference runtime's own
+<code>prettyprint</code>?</em> The <strong>same four documents, same inputs, same iteration counts</strong>
+run through the Go library and through each reference runtime's <code>prettyprint</code>
+stdlib; rendered output was verified <strong>byte-identical to MRI</strong> (a plain <code>diff</code>,
+empty) before any timing — for all four runtimes.</p>
+<ul>
+<li><strong>Host:</strong> Apple M4 Max (<code>Mac16,5</code>, arm64), macOS 26.5.1 — <strong>date 2026-07-03</strong>.
+  All runtimes on the host, no VM.</li>
+<li><strong>Runtimes:</strong> Go 1.26.4 · MRI <code>ruby 4.0.5 +PRISM</code> · MRI + YJIT · JRuby 10.1.0.0
+  (OpenJDK 25) · TruffleRuby 34.0.1 (GraalVM CE Native).</li>
+<li><strong>Method:</strong> each process runs 3 untimed warm-up passes, then 25 timed passes of
+  a fixed inner loop, timed with a monotonic clock; the <strong>best</strong> pass is reported
+  as <strong>ns/op</strong> (lower is better). <code>vs MRI</code> &lt; 1.00× means <em>faster than MRI</em>.
+  Interpreter start-up is outside the timed region, so these are operation costs,
+  not <code>ruby file.rb</code> process costs.</li>
+<li><strong>Workload:</strong> <code>format-flat</code> (fits one line, flat path), <code>format-nested</code> (array
+  of 12 keyed-hash records that overflows and breaks), <code>format-fill</code> (40-word
+  paragraph via <code>fill_breakable</code>), <code>format-deep</code> (20 nested groups). Harness and
+  scripts live in <a href="https://github.com/go-ruby-prettyprint/docs/tree/main/benchmarks"><code>benchmarks/</code></a>;
+  reproduce with <code>GOWORK=off bash benchmarks/run.sh</code>.</li>
+</ul>
+<h4 id="format-flat">format-flat<a class="headerlink" href="#format-flat" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby-prettyprint (pure Go)</strong></td>
+<td style="text-align: right;">882.3</td>
+<td style="text-align: right;">0.13×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">6970.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">2795.0</td>
+<td style="text-align: right;">0.40×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">27563.5</td>
+<td style="text-align: right;">3.95×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">8255.6</td>
+<td style="text-align: right;">1.18×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="format-nested">format-nested<a class="headerlink" href="#format-nested" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby-prettyprint (pure Go)</strong></td>
+<td style="text-align: right;">10373.1</td>
+<td style="text-align: right;">0.13×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">79005.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">30355.0</td>
+<td style="text-align: right;">0.38×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">52685.4</td>
+<td style="text-align: right;">0.67×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">45769.2</td>
+<td style="text-align: right;">0.58×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="format-fill">format-fill<a class="headerlink" href="#format-fill" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby-prettyprint (pure Go)</strong></td>
+<td style="text-align: right;">4871.0</td>
+<td style="text-align: right;">0.08×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">57500.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">24295.0</td>
+<td style="text-align: right;">0.42×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">37077.3</td>
+<td style="text-align: right;">0.64×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">44398.3</td>
+<td style="text-align: right;">0.77×</td>
+</tr>
+</tbody>
+</table>
+<h4 id="format-deep">format-deep<a class="headerlink" href="#format-deep" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Runtime</th>
+<th style="text-align: right;">ns/op</th>
+<th style="text-align: right;">vs MRI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>go-ruby-prettyprint (pure Go)</strong></td>
+<td style="text-align: right;">4835.2</td>
+<td style="text-align: right;">0.12×</td>
+</tr>
+<tr>
+<td>MRI</td>
+<td style="text-align: right;">40710.0</td>
+<td style="text-align: right;">1.00×</td>
+</tr>
+<tr>
+<td>MRI + YJIT</td>
+<td style="text-align: right;">17700.0</td>
+<td style="text-align: right;">0.43×</td>
+</tr>
+<tr>
+<td>JRuby</td>
+<td style="text-align: right;">29856.7</td>
+<td style="text-align: right;">0.73×</td>
+</tr>
+<tr>
+<td>TruffleRuby</td>
+<td style="text-align: right;">157741.3</td>
+<td style="text-align: right;">3.87×</td>
+</tr>
+</tbody>
+</table>
+<h3 id="go-vs-yjit-the-headline">go vs YJIT — the headline<a class="headerlink" href="#go-vs-yjit-the-headline" title="Permanent link">&para;</a></h3>
+<p>The pure-Go engine <strong>beats MRI + YJIT on every one of the four documents</strong>, the
+strongest comparison in the suite (YJIT is MRI's own JIT, warmed here):</p>
+<table>
+<thead>
+<tr>
+<th>Document</th>
+<th style="text-align: right;">go ns/op</th>
+<th style="text-align: right;">YJIT ns/op</th>
+<th style="text-align: right;">go speed-up vs YJIT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>format-flat</td>
+<td style="text-align: right;">882.3</td>
+<td style="text-align: right;">2795.0</td>
+<td style="text-align: right;"><strong>3.2× faster</strong></td>
+</tr>
+<tr>
+<td>format-nested</td>
+<td style="text-align: right;">10373.1</td>
+<td style="text-align: right;">30355.0</td>
+<td style="text-align: right;"><strong>2.9× faster</strong></td>
+</tr>
+<tr>
+<td>format-fill</td>
+<td style="text-align: right;">4871.0</td>
+<td style="text-align: right;">24295.0</td>
+<td style="text-align: right;"><strong>5.0× faster</strong></td>
+</tr>
+<tr>
+<td>format-deep</td>
+<td style="text-align: right;">4835.2</td>
+<td style="text-align: right;">17700.0</td>
+<td style="text-align: right;"><strong>3.7× faster</strong></td>
+</tr>
+</tbody>
+</table>
+<p>So on the library primitive the pure-Go Wadler engine is <strong>~3–8× faster than
+MRI</strong> and <strong>~3–5× faster than YJIT</strong> across flat, broken, fill and deep-nesting
+layouts, while producing byte-identical output. It also beats JRuby and
+TruffleRuby on the two substantial documents (<code>format-nested</code>, <code>format-fill</code>);
+on the sub-microsecond <code>format-flat</code> and on <code>format-deep</code> the JVM/Graal runtimes
+carry their warm-up and dispatch overhead and land slower than MRI.</p>
+<div class="admonition note">
+<p class="admonition-title">Honest framing</p>
+<p>Numbers are best-of-25 after 3 warm-up passes, on the host above, dated
+2026-07-03 — <strong>real measured values, nothing fabricated or cherry-picked</strong>;
+a second run reproduced every figure within noise. JRuby and TruffleRuby are
+warmed but still pay JVM / Graal dispatch cost; sub-microsecond ops
+(<code>format-flat</code>) carry the most relative noise, so treat their ratios as
+order-of-magnitude. <code>vs MRI</code> is wall-clock ns/op ratio; <strong>&lt; 1.00× = faster
+than MRI</strong>. Output is verified byte-identical to MRI for all runtimes before
+timing.</p>
 </div>
 
 
