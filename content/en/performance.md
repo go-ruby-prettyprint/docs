@@ -1,4 +1,9 @@
-# Performance
+---
+title: "Performance"
+weight: 50
+---
+
+# Performance {#performance}
 
 `go-ruby-prettyprint/prettyprint` is the pure-Go library that
 [`rbgo`](https://github.com/go-embedded-ruby/ruby) binds for Ruby's `prettyprint` layout
@@ -7,7 +12,7 @@ against the reference Ruby runtimes — part of the ecosystem-wide per-module pa
 No numbers are quoted here until they are measured on a pinned host and committed to the
 benchmark harness.
 
-## What is measured
+## What is measured {#what-is-measured}
 
 The **same** Ruby script — laying out a representative document of nested groups,
 breakables and fill mode through `PrettyPrint.format` at a fixed `maxwidth` — is run under
@@ -17,7 +22,7 @@ other column is that interpreter's own `prettyprint`. So the comparison is the
 deterministic checksum and its output is checked **byte-identical to MRI** before any
 timing is taken.
 
-## Method
+## Method {#method}
 
 - **Best-of-N wall time** (best, not mean, to suppress scheduler noise); single-shot
   processes, no warm-up beyond the script's own loop.
@@ -28,7 +33,7 @@ timing is taken.
   [`bench/modules/`](https://github.com/go-embedded-ruby/ruby/tree/main/bench/modules).
   Reproduce with `RBGO=./rbgo bash bench/modules/run.sh N`.
 
-## Result (best of 5, ms)
+## Result (best of 5, ms) {#result-best-of-5-ms}
 
 | Runtime | time | vs MRI |
 | --- | ---: | ---: |
@@ -40,16 +45,19 @@ timing is taken.
 
 rbgo runs on **go-ruby-prettyprint** and is **slightly faster than MRI** (0.89x) on this group/breakable layout workload (via the `PrettyPrint.format` API).
 
-!!! note "Honest framing"
-    JRuby and TruffleRuby are timed **cold, single-shot**, so they carry JVM /
-    Graal startup on every run — read them as one-shot `ruby file.rb` costs, the
-    same way `rbgo` and MRI are measured, not as steady-state JIT numbers. Rows
-    that complete in well under ~200 ms carry the most relative noise; treat
-    their ratios as order-of-magnitude. These are **real measured numbers** from
-    the 2026-06-30 run (Apple M-series; `ruby 4.0.5 +PRISM`, `jruby 10.1.0.0`,
-    `truffleruby 34.0.1`) — nothing is fabricated or cherry-picked.
+{{< callout type="info" >}}
+**Honest framing**
 
-## Library-level benchmark (Go API vs runtimes) — 2026-07-03
+JRuby and TruffleRuby are timed **cold, single-shot**, so they carry JVM /
+Graal startup on every run — read them as one-shot `ruby file.rb` costs, the
+same way `rbgo` and MRI are measured, not as steady-state JIT numbers. Rows
+that complete in well under ~200 ms carry the most relative noise; treat
+their ratios as order-of-magnitude. These are **real measured numbers** from
+the 2026-06-30 run (Apple M-series; `ruby 4.0.5 +PRISM`, `jruby 10.1.0.0`,
+`truffleruby 34.0.1`) — nothing is fabricated or cherry-picked.
+{{< /callout >}}
+
+## Library-level benchmark (Go API vs runtimes) — 2026-07-03 {#library-level-benchmark-go-api-vs-runtimes-2026-07-03}
 
 This section measures the **pure-Go library directly, through its Go API** — not
 the `rbgo` interpreter path recorded above. It isolates the Wadler/Lindig layout
@@ -75,7 +83,7 @@ empty) before any timing — for all four runtimes.
   scripts live in [`benchmarks/`](https://github.com/go-ruby-prettyprint/docs/tree/main/benchmarks);
   reproduce with `GOWORK=off bash benchmarks/run.sh`.
 
-#### format-flat
+#### format-flat {#format-flat}
 
 | Runtime | ns/op | vs MRI |
 | --- | ---: | ---: |
@@ -85,7 +93,7 @@ empty) before any timing — for all four runtimes.
 | JRuby | 27563.5 | 3.95× |
 | TruffleRuby | 8255.6 | 1.18× |
 
-#### format-nested
+#### format-nested {#format-nested}
 
 | Runtime | ns/op | vs MRI |
 | --- | ---: | ---: |
@@ -95,7 +103,7 @@ empty) before any timing — for all four runtimes.
 | JRuby | 52685.4 | 0.67× |
 | TruffleRuby | 45769.2 | 0.58× |
 
-#### format-fill
+#### format-fill {#format-fill}
 
 | Runtime | ns/op | vs MRI |
 | --- | ---: | ---: |
@@ -105,7 +113,7 @@ empty) before any timing — for all four runtimes.
 | JRuby | 37077.3 | 0.64× |
 | TruffleRuby | 44398.3 | 0.77× |
 
-#### format-deep
+#### format-deep {#format-deep}
 
 | Runtime | ns/op | vs MRI |
 | --- | ---: | ---: |
@@ -115,7 +123,7 @@ empty) before any timing — for all four runtimes.
 | JRuby | 29856.7 | 0.73× |
 | TruffleRuby | 157741.3 | 3.87× |
 
-### go vs YJIT — the headline
+### go vs YJIT — the headline {#go-vs-yjit-the-headline}
 
 The pure-Go engine **beats MRI + YJIT on every one of the four documents**, the
 strongest comparison in the suite (YJIT is MRI's own JIT, warmed here):
@@ -134,12 +142,15 @@ TruffleRuby on the two substantial documents (`format-nested`, `format-fill`);
 on the sub-microsecond `format-flat` and on `format-deep` the JVM/Graal runtimes
 carry their warm-up and dispatch overhead and land slower than MRI.
 
-!!! note "Honest framing"
-    Numbers are best-of-25 after 3 warm-up passes, on the host above, dated
-    2026-07-03 — **real measured values, nothing fabricated or cherry-picked**;
-    a second run reproduced every figure within noise. JRuby and TruffleRuby are
-    warmed but still pay JVM / Graal dispatch cost; sub-microsecond ops
-    (`format-flat`) carry the most relative noise, so treat their ratios as
-    order-of-magnitude. `vs MRI` is wall-clock ns/op ratio; **< 1.00× = faster
-    than MRI**. Output is verified byte-identical to MRI for all runtimes before
-    timing.
+{{< callout type="info" >}}
+**Honest framing**
+
+Numbers are best-of-25 after 3 warm-up passes, on the host above, dated
+2026-07-03 — **real measured values, nothing fabricated or cherry-picked**;
+a second run reproduced every figure within noise. JRuby and TruffleRuby are
+warmed but still pay JVM / Graal dispatch cost; sub-microsecond ops
+(`format-flat`) carry the most relative noise, so treat their ratios as
+order-of-magnitude. `vs MRI` is wall-clock ns/op ratio; **< 1.00× = faster
+than MRI**. Output is verified byte-identical to MRI for all runtimes before
+timing.
+{{< /callout >}}
