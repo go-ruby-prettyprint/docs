@@ -1,4 +1,9 @@
-# Why pure Go
+---
+title: "Why pure Go"
+weight: 20
+---
+
+# Why pure Go {#why-pure-go}
 
 `go-ruby-prettyprint/prettyprint` reimplements Ruby's `prettyprint` engine in **pure Go,
 with cgo disabled**. The layout algorithm it covers is **deterministic and
@@ -7,7 +12,7 @@ interpreter-independent**: given a stream of `text` / `breakable` / `group` call
 evaluation of arbitrary Ruby. That is exactly the part that can — and should — live as a
 standalone Go library, separate from the interpreter.
 
-## What it is — and isn't
+## What it is — and isn't {#what-it-is-and-isnt}
 
 This is the **layout engine** only — the deterministic group/breakable/indent/width-fitting
 algorithm (the buffer, the group stack and the depth-bucketed group queue). The `pp`
@@ -16,7 +21,7 @@ object inspector that *uses* it — walking an object graph and emitting
 [go-embedded-ruby](https://github.com/go-embedded-ruby/ruby). This library is the
 standalone Go backend `pp` binds to.
 
-## Extracted from rbgo, reusable by anyone
+## Extracted from rbgo, reusable by anyone {#extracted-from-rbgo-reusable-by-anyone}
 
 It is the layout backend bound into rbgo, but is a **standalone, reusable library** so
 that:
@@ -31,7 +36,7 @@ that:
 - the behaviour is pinned by a **differential oracle** against the system `ruby`,
   independent of any one consumer.
 
-## Why pure Go matters here
+## Why pure Go matters here {#why-pure-go-matters-here}
 
 Because the library is CGO-free and dependency-free, it:
 
@@ -42,4 +47,4 @@ Because the library is CGO-free and dependency-free, it:
   the cross-arch and Windows lanes (where `ruby` is absent) still validate the library via
   the deterministic golden + white-box tests.
 
-See [Usage & API](api.md) for the surface and [Roadmap](roadmap.md) for what is in scope.
+See [Usage & API]({{< relref "api.md" >}}) for the surface and [Roadmap]({{< relref "roadmap.md" >}}) for what is in scope.

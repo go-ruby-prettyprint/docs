@@ -1,4 +1,9 @@
-# Roadmap
+---
+title: "Roadmap"
+weight: 40
+---
+
+# Roadmap {#roadmap}
 
 `go-ruby-prettyprint/prettyprint` is grown **test-first**, each capability
 differential-tested against MRI rather than built in isolation. Ruby's `PrettyPrint` layout
@@ -14,7 +19,7 @@ engine â€” the deterministic, interpreter-independent Wadler/Lindig algorithm â€
 | Single-line formatter | `singleline_format`, where breakables become their separator text and nothing ever breaks; custom `newline` and `maxwidth`. | **Done** |
 | Differential oracle & coverage | A shared corpus run through this package and a generated `PrettyPrint.format` / `singleline_format` script, output asserted identical; deterministic golden + white-box tests alone hold 100% coverage, gofmt + go vet clean, green across all six 64-bit Go arches and three OSes. | **Done** |
 
-## Documented out-of-scope boundaries
+## Documented out-of-scope boundaries {#documented-out-of-scope-boundaries}
 
 These are **deliberate**, recorded so the module's surface is unambiguous:
 
@@ -29,5 +34,5 @@ These are **deliberate**, recorded so the module's surface is unambiguous:
 - **Standalone & reusable.** The module has no dependency on the Ruby runtime; the
   dependency runs the other way.
 
-See [Usage & API](api.md) for the surface and [Why pure Go](why.md) for the
+See [Usage & API]({{< relref "api.md" >}}) for the surface and [Why pure Go]({{< relref "why.md" >}}) for the
 engine / inspector split.

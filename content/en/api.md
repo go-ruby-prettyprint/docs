@@ -1,20 +1,28 @@
-# Usage & API
+---
+title: "Usage & API"
+weight: 30
+---
+
+# Usage & API {#usage-api}
 
 The public API lives at the module root (`github.com/go-ruby-prettyprint/prettyprint`). It
 is **Ruby-shaped but Go-idiomatic**: the methods mirror Ruby's `PrettyPrint`
 (`text`/`breakable`/`group`/`nest`/`fill_breakable`), while the surface follows Go
 conventions — value types, callbacks for blocks, no global state.
 
-!!! success "Status: implemented"
-    The library is built and importable as `github.com/go-ruby-prettyprint/prettyprint`, bound into `rbgo` as the layout backend; see [Roadmap](roadmap.md).
+{{< callout type="info" >}}
+**Status: implemented**
 
-## Install
+The library is built and importable as `github.com/go-ruby-prettyprint/prettyprint`, bound into `rbgo` as the layout backend; see [Roadmap]({{< relref "roadmap.md" >}}).
+{{< /callout >}}
+
+## Install {#install}
 
 ```sh
 go get github.com/go-ruby-prettyprint/prettyprint
 ```
 
-## Worked example
+## Worked example {#worked-example}
 
 ```go
 package main
@@ -53,7 +61,7 @@ func main() {
 }
 ```
 
-## API map (MRI → Go)
+## API map (MRI → Go) {#api-map-mri-go}
 
 | Ruby (`PrettyPrint`)                       | Go                                                              |
 | ------------------------------------------ | -------------------------------------------------------------- |
@@ -74,7 +82,7 @@ func main() {
 The default `genspace` is `DefaultGenSpace` (`n` ASCII spaces); pass `nil` to `New` /
 `Format` to use it.
 
-## Capabilities
+## Capabilities {#capabilities}
 
 - **Groups** that print flat when they fit and break at their breakables when they
   overflow `maxwidth` — the exact `break_outmost_groups` / depth-bucketed `GroupQueue`
@@ -92,7 +100,7 @@ The default `genspace` is `DefaultGenSpace` (`n` ASCII spaces); pass `nil` to `N
 - **Custom `newline`** and **custom `maxwidth`**, matching MRI's `PrettyPrint.new` /
   `PrettyPrint.format` signatures.
 
-## MRI conformance
+## MRI conformance {#mri-conformance}
 
 Correctness is defined by reference Ruby. A **differential oracle** runs a shared corpus
 through both this package and a generated `PrettyPrint.format` / `singleline_format` script
@@ -101,7 +109,7 @@ stdout/stdin (so Windows text-mode never rewrites the bytes), skips when `ruby` 
 and gates on `RUBY_VERSION >= "4.0"`. The deterministic golden + white-box tests alone hold
 the 100% gate on every platform, including Windows and the qemu cross-arch lanes.
 
-## Relationship to Ruby
+## Relationship to Ruby {#relationship-to-ruby}
 
 `go-ruby-prettyprint/prettyprint` is **standalone and reusable**, and is the layout backend
 bound into [go-embedded-ruby](https://github.com/go-embedded-ruby/ruby) by `rbgo` — the
