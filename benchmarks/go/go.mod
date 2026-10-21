@@ -1,5 +1,5 @@
 module bench
 
-go 1.26.4
+go 1.27.1
 
-require github.com/go-ruby-prettyprint/prettyprint v0.0.0-20260916100624-a502f95c3ad3
+require github.com/go-ruby-prettyprint/prettyprint v0.0.0-20261010113142-58de5cc147ce
