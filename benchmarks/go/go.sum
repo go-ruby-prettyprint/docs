@@ -4,3 +4,5 @@ github.com/go-ruby-prettyprint/prettyprint v0.0.0-20260717072124-c98cbe80c502 h1
 github.com/go-ruby-prettyprint/prettyprint v0.0.0-20260717072124-c98cbe80c502/go.mod h1:SIQyfiIJRKJq0OD9gWYfmvQTdJClJf8z56BsfVVw7rY=
 github.com/go-ruby-prettyprint/prettyprint v0.0.0-20260916100624-a502f95c3ad3 h1:zdfvHMjuhc74ytM8B7VaRekQv1G8d7GDMKKS1cmATs8=
 github.com/go-ruby-prettyprint/prettyprint v0.0.0-20260916100624-a502f95c3ad3/go.mod h1:SIQyfiIJRKJq0OD9gWYfmvQTdJClJf8z56BsfVVw7rY=
+github.com/go-ruby-prettyprint/prettyprint v0.0.0-20261027104533-2b51f1b3006a h1:Z4WduiOH7JVYs9claDzUyVtwvRZUn5+JSUqSObFo2YU=
+github.com/go-ruby-prettyprint/prettyprint v0.0.0-20261027104533-2b51f1b3006a/go.mod h1:3Y9EuIgdctjs00vbpYZagw0UqxNrQFeXDnss4jINjko=
